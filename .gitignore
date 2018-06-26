@@ -1,0 +1,39 @@
+# java specific
+*.bak
+*.class
+
+#eclipse specific
+.metadata/*
+.settings
+
+#intellij specific
+.idea/
+*.iml
+*.ipr
+*.iws
+
+#gradle specific
+.gradle/
+
+#temp build
+[Bb]uild*/
+[Bb]in/
+[Dd]ebug*/
+[Rr]elease*/
+
+#debug specific
+*.log
+
+#windows Junk
+*.ini
+[Tt]humbs.db
+*.DS_Store
+
+make/dist/jfoenix.jar
+gradle/secring.gpg
+subprojects/jfoenix/tmp
+out
+libs/*
+.classpath
+.project
+JFoenix.eml

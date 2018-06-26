@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="675.0" prefWidth="800.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.listen2.controllers.HomeWindowController">
+   <children>
+      <VBox alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="561.0" prefWidth="602.0">
+         <children>
+            <HBox fx:id="windowFrame" alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="800.0">
+               <children>
+                   <Label fx:id="closeBtn" contentDisplay="RIGHT">
+                       <graphic>
+                           <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                               <image>
+                                   <Image url="@../assets/close.png" />
+                               </image>
+                           </ImageView>
+                       </graphic>
+                       <HBox.margin>
+                           <Insets left="10.0" />
+                       </HBox.margin>
+                       <padding>
+                           <Insets bottom="2.0" top="2.0" />
+                       </padding>
+                   </Label>
+                   
+                  <Label fx:id="minimizeBtn" contentDisplay="RIGHT">
+                      <graphic>
+                          <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../assets/minimize.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="3.0" top="3.0" />
+                     </padding>
+                  </Label>
+
+               </children>
+            </HBox>
+            <TabPane fx:id="mainTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="623.0" prefWidth="900.0" scaleShape="false" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab fx:id="recommendTabHeader" closable="false" text="精选歌单" />
+                <Tab fx:id="searchTabHeader" closable="false" text="快速搜索" />
+                  <Tab fx:id="mylistTabHeader" closable="false" text="我的歌单" />
+                  <Tab fx:id="aboutTabHeader" closable="false" text="关于" />
+              </tabs>
+            </TabPane>
+            <HBox fx:id="playerContianer" prefHeight="100.0" prefWidth="750.0" />
+         </children>
+      </VBox>
+   </children>
+</StackPane>
