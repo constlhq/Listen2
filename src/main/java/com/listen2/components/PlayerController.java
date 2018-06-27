@@ -112,21 +112,28 @@ public class PlayerController {
     trackTime = new Label("/00:00");
     curTime = new Label("00:00");
     playQueueController = new PlayQueueController();
+    imageCover = new ImageView(new Image(PlayerController.class.getResource("/assets/mycover.jpg").toString()));
 
     providerMap = new HashMap<String,IProvider>(){{
       put("netease",new Netease());
       put("qq",new QQ());
       put("xiami",new Xiami());
     }};
-    timer = new Timer();
-    Track track = playQueueController.nextTrack();
-    timer = new Timer();
+
+
+    Track track = playQueueController.currentTrack();
+
     if (track !=null){
-        Sound s = new Sound();
-        providerMap.get(track.source).bootstrap_track(track,s);
-        mediaPlayer  = new MediaPlayer(new Media(s.url));
-    }else{
-      mediaPlayer  = new MediaPlayer(new Media(PlayerController.class.getResource("/assets/test.mp3").toString()));
+      System.out.println(track.img_url);
+      String url =  providerMap.get(track.source).bootstrap_track(track);
+      Image songCover =  new Image(track.img_url);
+      imageCover.setImage(songCover);
+      songName.setText(track.title);
+      singerName.setText(track.artist);
+      if(url != null){
+        mediaPlayer = new MediaPlayer(new Media(url));
+        bindHandlers();
+      }
     }
     init();
   }
@@ -236,7 +243,7 @@ public class PlayerController {
     randomRegion.setVisible(false);
     repeatAllRegion.setVisible(true);
 
-    imageCover = new ImageView(new Image(PlayerController.class.getResource("/assets/mycover.jpg").toString()));
+
     imageCover.setFitHeight(72);
     imageCover.setFitWidth(72);
 
@@ -310,20 +317,48 @@ public class PlayerController {
 
 
   private void playNext(){
-
     Track track = playQueueController.nextTrack();
     if (track !=null){
-      Sound s = new Sound();
-      providerMap.get(track.source).bootstrap_track(track,s);
-      ObservableList<javafx.scene.media.Track> tracks =  mediaPlayer.getMedia().getTracks();
+      Image songCover =  new Image(track.img_url);
+      imageCover.setImage(songCover);
+      songName.setText(track.title);
+      singerName.setText(track.artist);
+      String url =  providerMap.get(track.source).bootstrap_track(track);
+
       mediaPlayer.stop();
-      mediaPlayer = new MediaPlayer(new Media(s.url));
-      bindHandlers();
+      if(url != null){
+        mediaPlayer = new MediaPlayer(new Media(url));
+        bindHandlers();
+        mediaPlayer.play();
+      }else{
+        playNext();
+      }
+
     }else{
       mediaPlayer.stop();
     }
+  }
 
+  private void playPrevious(){
+    Track track = playQueueController.perviousTrack();
+    if (track !=null){
+      Image songCover =  new Image(track.img_url);
+      imageCover.setImage(songCover);
+      songName.setText(track.title);
+      singerName.setText(track.artist);
+      String url =  providerMap.get(track.source).bootstrap_track(track);
 
+      mediaPlayer.stop();
+      if(url != null){
+        mediaPlayer = new MediaPlayer(new Media(url));
+        bindHandlers();
+        mediaPlayer.play();
+      }else{
+        playNext();
+      }
+    }else{
+      mediaPlayer.stop();
+    }
   }
 
   private void bindHandlers(){
@@ -359,24 +394,19 @@ public class PlayerController {
 
 
     mediaPlayer.setOnEndOfMedia(() -> {
-      timer.cancel();
       mediaPlayer.stop();
       playNext();
     });
+
 
     mediaPlayer.statusProperty().addListener((obvs,ov,nv)->{
 
       System.out.println("ov+++++"+ov);
       System.out.println("nv+++++"+nv);
 
-      if (ov== null  && nv == MediaPlayer.Status.READY){
-        try{
-          Thread.sleep(800);
-
-        }catch  (InterruptedException e){
-
-        }
-        mediaPlayer.play();
+      if(nv ==MediaPlayer.Status.STALLED){
+        // buffering
+        mediaPlayer.seek(Duration.ZERO);
       }
 
 
@@ -404,7 +434,7 @@ public class PlayerController {
 
 
     playRegion.setOnMouseClicked(e -> {
-      if (mediaPlayer.getStatus() == MediaPlayer.Status.READY ||mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+      if (mediaPlayer.getStatus() == MediaPlayer.Status.READY || mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
         mediaPlayer.play();
       }
     });
@@ -445,6 +475,10 @@ public class PlayerController {
       playNext();
     });
 
+    backwordRegion.setOnMouseClicked(e->{
+      playPrevious();
+    });
+
     queueRegion.setOnMouseClicked(e -> {
 
       if (queuePopup.isShowing()) {
@@ -481,11 +515,11 @@ public class PlayerController {
     public Track nextTrack(){
       switch(repeat_mode){
         case REPEAT_ALL:
-          int next = observableTrackList.size()%(++currentPlayingIndex);
-          if (next < observableTrackList.size()){
+          int next = ++currentPlayingIndex < observableTrackList.size()? currentPlayingIndex:0;
+          if ( next < observableTrackList.size()){
             return observableTrackList.get(next);
           }
-            return null;
+          return null;
         case REPEAT_ONE:
           if (currentPlayingIndex < observableTrackList.size()){
             return observableTrackList.get(currentPlayingIndex);
@@ -501,9 +535,34 @@ public class PlayerController {
       }
     }
 
+
+    public Track perviousTrack(){
+      switch(repeat_mode){
+        case REPEAT_ALL:
+
+          int previous = --currentPlayingIndex >= 0 ? currentPlayingIndex:observableTrackList.size()-1;
+          if (previous>=0){
+            return observableTrackList.get(previous);
+          }
+          return null;
+        case REPEAT_ONE:
+          if (currentPlayingIndex < observableTrackList.size()){
+            return observableTrackList.get(currentPlayingIndex);
+          }
+          return null;
+        case RANDOM:
+          if (observableTrackList.size()>0){
+            return observableTrackList.get(new SecureRandom().nextInt(observableTrackList.size()));
+          }
+          return null;
+        default:
+          return null;
+      }
+    }
+
     public Track currentTrack(){
-      if (observableTrackList.size()>0){
-        return observableTrackList.get(new SecureRandom().nextInt(observableTrackList.size()));
+      if (observableTrackList.size() > currentPlayingIndex){
+        return observableTrackList.get(currentPlayingIndex);
       }
       return null;
     }
@@ -534,11 +593,12 @@ public class PlayerController {
       TableColumn<Track, String> titleCol = new TableColumn<>("歌曲");
       titleCol.setEditable(true);
       titleCol.setCellValueFactory(new PropertyValueFactory("titleProperty"));
-      titleCol.setPrefWidth(queueTableView.getPrefWidth() *0.6);
+      titleCol.setPrefWidth(queueTableView.getPrefWidth() *0.5);
 
 
       TableColumn actionCol = new TableColumn();
       actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+      actionCol.setPrefWidth(queueTableView.getPrefWidth() *0.1);
 
       TableColumn<Track, String> singerCol = new TableColumn<>("歌手");
       singerCol.setCellValueFactory(new PropertyValueFactory("artistProperty"));
@@ -605,7 +665,6 @@ public class PlayerController {
     }
 
     private void  addListener(){
-
       removeAll.setOnMouseClicked(e->{
         observableTrackList.clear();
       });
@@ -616,7 +675,7 @@ public class PlayerController {
     }
 
     public PlayQueueController() {
-      playQueueContainer = new VBox(0);
+      playQueueContainer = new VBox();
       queueTableView = new TableView<>();
       popUpHeaderContainer = new HBox();
       formTitle = new Label("播放列表");
@@ -624,6 +683,7 @@ public class PlayerController {
       removeAll = new JFXButton("清空列表");
       observableTrackList = FXCollections.observableArrayList();
       repeat_mode = Repeat_Mode.REPEAT_ALL;
+      currentPlayingIndex = 0;
       init();
     }
 

@@ -28,9 +28,12 @@ public class AppMain extends Application{
     MainTabPane tabPane = new MainTabPane(new PlayListTab().getTab(),new SearchTab().getTab(),new MyListTab().getTab(),new AbouTab().getTab());
     PlayerController playerController = new PlayerController();
     HBox hBox = playerController.getPlayerBox();
+    HBox formTitle = new FormTitleBar().getParentHBox();
+
+    tabPane.setTebHeight( 720- hBox.getPrefHeight() - formTitle.getPrefHeight());
 
 
-    rootNode.getChildren().addAll(new FormTitleBar().getParentHBox(),tabPane.getJfxTabPane(),hBox);
+    rootNode.getChildren().addAll(formTitle,tabPane.getJfxTabPane(),hBox);
     Scene scene = new Scene(rootNode,960,720);
     scene.getStylesheets().add(getClass().getResource("/css/test.css").toExternalForm());
     primaryStage.setScene(scene);

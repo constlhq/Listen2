@@ -123,7 +123,7 @@ public class QQ implements IProvider {
   }
   
 
-  public boolean  bootstrap_track (Track track ,Sound sound ){
+  public String  bootstrap_track (Track track){
     String target_url = String.format("https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=195219765&jsonpCallback=MusicJsonCallback004680169373158849&loginUin=1297716249&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&cid=205361747&callback=MusicJsonCallback004680169373158849&uin=1297716249&songmid=%s&filename=C400%s.m4a&guid=7332953645", track.id.substring(8),track.id.substring(8));
     String responseBody = get(target_url);
     System.out.println(responseBody);
@@ -132,10 +132,9 @@ public class QQ implements IProvider {
       JsonNode dataNode = mapper.readTree(jsonBody).get("data");
       String token = dataNode.get("items").get(0).get("vkey").asText();
       String url = "http://dl.stream.qqmusic.qq.com/C400" + track.id.split("_")[1]+".m4a?vkey="+ token +"&uin=1297716249&fromtag=0&guid=7332953645";
-      sound.url = url;
-      return true;
+      return url;
     }catch (Exception e){
-      return false;
+      return null;
     }
   }
 
@@ -258,9 +257,9 @@ public class QQ implements IProvider {
   QQ qq = new QQ();
     Track t= qq.artist("/playlist?artist_id=qqartist_001MXQUi1tlLon").tracks.get(0);
     Sound s = new Sound();
-    qq.bootstrap_track(t,s);
 
-    System.out.println(s.url);
+
+    System.out.println(qq.bootstrap_track(t));
 
   }
 }

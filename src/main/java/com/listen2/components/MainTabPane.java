@@ -14,8 +14,15 @@ public class MainTabPane {
     jfxTabPane.setId("main-tab-pane");
     jfxTabPane.getTabs().addAll(playListTab,searchTab,myListTab,aboutTab);
 
-    jfxTabPane.setMinHeight(300);
+    setTebHeight(540 );
   }
+
+  public void  setTebHeight(double height){
+    jfxTabPane.setPrefHeight(height);
+  }
+
+
+
 
 
   public MainTabPane(Tab playListTab, Tab searchTab, Tab myListTab, Tab aboutTab) {

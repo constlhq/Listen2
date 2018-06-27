@@ -208,7 +208,7 @@ public class Netease implements IProvider{
     }
   }
 
-  public boolean  bootstrap_track (Track track ,Sound sound ){
+  public String  bootstrap_track (Track track){
     String target_url = "http://music.163.com/weapi/song/enhance/player/url?csrf_token=";
     String song_id = track.id;
     song_id = song_id.substring("netrack_".length());
@@ -218,15 +218,10 @@ public class Netease implements IProvider{
       String responseBody =  post(target_url,data);
       JsonNode dataNode = mapper.readTree(responseBody);
       String url = dataNode.get("data").get(0).get("url").asText();
-      if (url!=null){
-        sound.url = url;
-        return true;
-      }else{
-        return false;
-      }
+      return url;
     }catch (Exception e){
       e.printStackTrace();
-      return false;
+     return null;
     }
   }
 

@@ -11,7 +11,7 @@ public interface IProvider {
   ObjectMapper mapper = new ObjectMapper(); // create once, reuse
   List<PlayListMeta> get_playlists(String url);
   PlayList get_playlist(String url) ;
-  boolean  bootstrap_track (Track track ,Sound sound );
+  String  bootstrap_track (Track track);
   SearchResult search(String url) ;
   PlayList album (String url) ;
   PlayList artist(String url) ;

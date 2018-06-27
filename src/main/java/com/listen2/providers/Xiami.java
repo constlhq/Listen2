@@ -138,27 +138,27 @@ public class Xiami implements IProvider{
              .build();
      }
 
-  public boolean  bootstrap_track (Track track ,Sound sound ){
+  public String  bootstrap_track (Track track){
     String target_url = "http://www.xiami.com/song/playlist/id/" + track.id.substring("xmtrack_".length()) + "/object_name/default/object_id/0/cat/json";
     String responseBody = UtilTools.get(target_url);
     try{
       JsonNode dataNode = mapper.readTree(responseBody).get("data");
       if(!dataNode.has("trackList")){
-        return false;
+        return null;
       }else{
         System.out.println(responseBody);
         String location = dataNode.get("trackList").get(0).get("location").asText();
         JsonNode trackNode =  dataNode.get("trackList").get(0);
-        sound.url = handleProtocolRelativeUrl(caesar(location));
         track.album_id = "xmalbum_" + trackNode.get("album_id").asText();
         track.album =   trackNode.get("album_name").asText() ;
         track.img_url = xm_retina_url(handleProtocolRelativeUrl(trackNode.get("pic").asText()));
         track.lyric_url = trackNode.get("lyric_url").asText();
-        return true;
+        String url = handleProtocolRelativeUrl(caesar(location));
+        return url;
       }
     }catch (IOException e){
       loger.error("get xiami track failed");
-      return false;
+      return null;
     }
   }
 
@@ -277,7 +277,7 @@ public class Xiami implements IProvider{
     Sound s = new Sound();
     Track t = xiami.search("/search?source=xiami&keywords=love%20you&curpage=1").tracks.get(0);
 
-    xiami.bootstrap_track(t,s);
-    System.out.println(s.url);
+
+    System.out.println(xiami.bootstrap_track(t));
   }
 }
