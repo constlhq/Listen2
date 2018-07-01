@@ -15,9 +15,10 @@ public class Track {
   public String img_url;
   public String url;
   public String lyric_url;
-  boolean disabled;
+  public boolean disabled;
   public StringProperty titleProperty;
   public StringProperty artistProperty;
+  public StringProperty albumProperty;
 
   public Track(TrackBuilder trackBuilder ) {
     this.id = trackBuilder.id;
@@ -35,6 +36,7 @@ public class Track {
 
     this.titleProperty = new SimpleStringProperty(title);
     this.artistProperty = new SimpleStringProperty(artist);
+    this.albumProperty = new SimpleStringProperty(album);
 
   }
 
@@ -131,6 +133,18 @@ public class Track {
 
   public StringProperty artistPropertyProperty() {
     return artistProperty;
+  }
+
+  public void setAlbumProperty(String albumProperty) {
+    this.albumProperty.set(albumProperty);
+  }
+
+  public String getAlbumProperty() {
+    return albumProperty.get();
+  }
+
+  public StringProperty albumPropertyProperty() {
+    return albumProperty;
   }
 
   @Override

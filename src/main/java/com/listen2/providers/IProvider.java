@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface IProvider {
-  ObjectMapper mapper = new ObjectMapper(); // create once, reuse
-  List<PlayListMeta> get_playlists(String url);
-  PlayList get_playlist(String url) ;
+  ObjectMapper mapper = new ObjectMapper();
+  List<PlayListMeta> get_playlists(int curpage);
+  PlayList get_playlist(String id) ;
   String  bootstrap_track (Track track);
-  SearchResult search(String url) ;
-  PlayList album (String url) ;
-  PlayList artist(String url) ;
-  String lyric(String url) ;
-  PlayList  playlist (String url);
-  Map<String,String> parse_url(String url);
+  SearchResult search(String keywork,int curpage);
+  PlayList album (String id) ;
+  String lyric(Track track) ;
+  String codeName();
 }

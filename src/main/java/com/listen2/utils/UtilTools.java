@@ -65,6 +65,7 @@ public interface UtilTools {
       if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
       return response.body().string();
     }catch (IOException e){
+      e.printStackTrace();
       return null;
     }
   }

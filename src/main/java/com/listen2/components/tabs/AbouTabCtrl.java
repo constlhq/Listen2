@@ -1,17 +1,18 @@
-package com.listen2.components.tabs.search;
+package com.listen2.components.tabs;
 
 import javafx.scene.control.Tab;
 
-public class SearchTab {
+public class AbouTabCtrl{
   private Tab tab;
 
-  public SearchTab() {
-    tab  = new Tab("快速搜索");
+
+  public AbouTabCtrl() {
+    tab = new Tab("关于");
     init();
   }
 
   private void init(){
-    tab.setId("search-tab");
+    tab.setId("about-tab");
     tab.setClosable(false);
   }
 

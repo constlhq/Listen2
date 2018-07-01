@@ -60,7 +60,7 @@ public class Netease implements IProvider{
     String pubKey = "010001";
     String sec_key = _create_secret_key(16);
     String enc_text = _aes_encrypt(_aes_encrypt(text, nonce), sec_key);
-    System.out.println("enc_text:"+enc_text);
+//    System.out.println("enc_text:"+enc_text);
     String enc_sec_key = _rsa_encrypt(sec_key, pubKey, modulus);
     Map<String,String> data = new HashMap<>();
     data.put("params",enc_text);
@@ -116,31 +116,31 @@ public class Netease implements IProvider{
     switch (type){
       case "playlist":
         return  new Track.TrackBuilder()
-                .id( "netrack_" + track_json.get("id").asText())
+                .id( track_json.get("id").asText())
                 .title( track_json.get("name").asText())
                 .artist(track_json.get("ar").get(0).get("name").asText())
-                .artist_id( "neartist_" + track_json.get("ar").get(0).get("id").asText())
+                .artist_id(track_json.get("ar").get(0).get("id").asText())
                 .album( track_json.get("al").get("name").asText())
-                .album_id( "nealbum_" + track_json.get("al").get("id").asText())
+                .album_id(track_json.get("al").get("id").asText())
                 .source("netease")
                 .source_url( "http://music.163.com/#/song?id=" + track_json.get("id").asText())
                 .img_url( track_json.get("al").get("picUrl").asText())
-                .url("netrack_" + track_json.get("id").asText())
+                .url(track_json.get("id").asText())
                 .lyric_url("")
                 .disabled(track_json.get("st").asInt()<0||track_json.get("fee").asInt()==4)
                 .build();
       case "search":
         return  new Track.TrackBuilder()
-                .id( "netrack_" + track_json.get("id").asText())
+                .id(track_json.get("id").asText())
                 .title( track_json.get("name").asText())
                 .artist(track_json.get("artists").get(0).get("name").asText())
-                .artist_id( "neartist_" + track_json.get("artists").get(0).get("id").asText())
+                .artist_id(track_json.get("artists").get(0).get("id").asText())
                 .album( track_json.get("album").get("name").asText())
-                .album_id( "nealbum_" + track_json.get("album").get("id").asText())
+                .album_id(track_json.get("album").get("id").asText())
                 .source("netease")
                 .source_url( "http://music.163.com/#/song?id=" + track_json.get("id").asText())
                 .img_url( track_json.get("album").get("picUrl").asText())
-                .url("netrack_" + track_json.get("id").asText())
+                .url(track_json.get("id").asText())
                 .lyric_url("")
                 .disabled(track_json.get("status").asInt()<0||track_json.get("fee").asInt()==4)
                 .build();
@@ -151,12 +151,9 @@ public class Netease implements IProvider{
 
 
 
-  public List<PlayListMeta> get_playlists(String url){
-    String order = "hot";
-    String offset = getParameterByName("offset",url);
-    String target_url = !offset.isEmpty()
-            ? "http://music.163.com/discover/playlist/?order=" + order + "&limit=35&offset=" + offset
-            : "http://music.163.com/discover/playlist/?order=" + order;
+  public List<PlayListMeta> get_playlists(int curpage){
+    String target_url = "http://music.163.com/discover/playlist/?order=hot&limit=30&offset=" + curpage*30;
+
 
     String responseBody = get(target_url);
     Document doc = Jsoup.parse(responseBody);
@@ -165,7 +162,7 @@ public class Netease implements IProvider{
     return mcvrlst.stream().map(li->{
       String relative_url  = li.selectFirst("a").attr("href");
       String list_id = getParameterByName("id",relative_url);
-      String id = "neplaylist_" + list_id;
+      String id = list_id;
       String title = li.selectFirst("a").attr("title");
       String cover_img_url = li.selectFirst("img").attr("src") ;
       String source_url = "http://music.163.com/#/playlist?id=" + list_id;
@@ -179,22 +176,19 @@ public class Netease implements IProvider{
     }).collect(toList());
   }
 
-  public PlayList get_playlist(String url) {
-    // special thanks for @Binaryify
-    // https://github.com/Binaryify/NeteaseCloudMusicApi
-      String list_id = getParameterByName("list_id", url).split("_")[1];
+  public PlayList get_playlist(String list_id) {
+    System.out.println(list_id);
       String target_url = "http://music.163.com/weapi/v3/playlist/detail";
       String d = String.format("{\"id\":\"%s\",\"offset\":0,\"total\":true,\"limit\":1000,\"n\":1000,\"csrf_token\":\"\"}", list_id);
       try{
       Map<String,String> data = _encrypted_request(d);
       String responseBody =  post(target_url,data);
       JsonNode dataNode = mapper.readTree(responseBody);
-      System.out.println(responseBody);
       PlayListMeta playListMeta= new PlayListMeta.PlayListMetaBuilder()
               .sourceurl("http://music.163.com/#/playlist?id=" + list_id)
               .title(dataNode.get("playlist").get("name").asText())
               .imgurl(dataNode.get("playlist").get("coverImgUrl").asText())
-              .id("neplaylist_" + list_id)
+              .id(list_id)
               .build();
       List<Track> trackList = new ArrayList<>();
       dataNode.get("playlist").get("tracks").forEach(track_json->{
@@ -211,38 +205,37 @@ public class Netease implements IProvider{
   public String  bootstrap_track (Track track){
     String target_url = "http://music.163.com/weapi/song/enhance/player/url?csrf_token=";
     String song_id = track.id;
-    song_id = song_id.substring("netrack_".length());
+    song_id = song_id;
     String d = String.format("{\"ids\": [%s],\"br\": 320000, \"csrf_token\":\"\"}",song_id);
     Map<String,String> data = _encrypted_request(d);
     try{
       String responseBody =  post(target_url,data);
+      System.out.println(responseBody);
       JsonNode dataNode = mapper.readTree(responseBody);
       String url = dataNode.get("data").get(0).get("url").asText();
       return url;
     }catch (Exception e){
       e.printStackTrace();
-     return null;
+      return null;
     }
   }
 
-  public SearchResult search(String url) {
+  public SearchResult search(String keyword,int curpage) {
     // use chrome extension to modify referer.
     String target_url = "http://music.163.com/api/search/pc";
-    String keyword = getParameterByName("keywords", url);
-    int curpage = Integer.parseInt(getParameterByName("curpage", url));
     Map<String,String> data = new HashMap<String,String>(){{
       put("s",keyword);
       put("offset",20*(curpage-1)+"");
       put("limit","20");
       put("type","1");
     }};
+    System.out.println(data);
     List<Track> tracks = new ArrayList<>();
     try{
       String responseBody = post(target_url,data);
       JsonNode dataNode = mapper.readTree(responseBody);
 
       System.out.println(responseBody);
-
       dataNode.get("result").get("songs").forEach(song->tracks.add(_convert_song(song,"search")));
       return  new SearchResult(tracks,dataNode.get("result").get("songCount").asInt());
     }catch(Exception e){
@@ -251,8 +244,7 @@ public class Netease implements IProvider{
     }
   }
 
-  public PlayList album (String url){
-    String album_id = getParameterByName("album_id", url).split("_")[1];
+  public PlayList album (String album_id){
     String target_url = "http://music.163.com/api/album/" + album_id;
     try{
       String responseBody = get(target_url);
@@ -275,13 +267,12 @@ public class Netease implements IProvider{
     }
   }
 
-  public PlayList artist(String url) {
-    String artist_id = getParameterByName("artist_id", url).split("_")[1];
+  public PlayList artist(String artist_id) {
     String target_url = "http://music.163.com/api/artist/" + artist_id;
     try{
       String responseBody = get(target_url);
       JsonNode dataNode = mapper.readTree(responseBody);
-      System.out.println(responseBody);
+//      System.out.println(responseBody);
       PlayListMeta playListMeta= new PlayListMeta.PlayListMetaBuilder()
               .id("neartist_" + dataNode.get("artist").get("id").asText())
               .title(dataNode.get("artist").get("name").asText())
@@ -300,11 +291,10 @@ public class Netease implements IProvider{
     }
   }
 
-  public String lyric(String url) {
-    String track_id = getParameterByName("track_id", url).split("_")[1];
+  public String lyric(Track track) {
+    String track_id = track.id;
     String target_url = "http://music.163.com/weapi/song/lyric?csrf_token=";
-    String csrf = "";
-    String d = String.format("{\"id\":%s,\"lv\":-1,\"tv\":-1,\"csrf_token\":%s}",track_id,csrf);
+    String d = String.format("{\"id\":%s,\"lv\":-1,\"tv\":-1,\"csrf_token\":\"\"}",track_id);
     Map<String,String> data = _encrypted_request(d);
     try{
       String responseBody =  post(target_url,data);
@@ -313,45 +303,14 @@ public class Netease implements IProvider{
         return dataNode.get("lrc").get("lyric").asText();
       }
     }catch (Exception e){
+      e.printStackTrace();
       return null;
     }
     return null;
   }
-  public PlayList  playlist (String url){
-    String list_id = getParameterByName("list_id",url).split("_")[0];
-    switch(list_id){
-      case "neplaylist":
-        return get_playlist(url);
-      case "nealbum":
-        return album(url);
-      case "neartist":
-        return artist(url);
-      default:
-        return null;
-    }
+  public String codeName(){
+    return "netease";
   }
-
-  public Map<String,String> parse_url (String url) {
-    Map<String,String>  resultMap = new HashMap<>();
-    url = url.replaceAll("music.163.com/#/my/m/music/playlist\\?","music.163.com/#/playlist?");
-    if (url.contains("//music.163.com/#/m/playlist") || url.contains("//music.163.com/#/playlist")) {
-      resultMap.put("type", "playlist");
-      resultMap.put("neplaylist_",getParameterByName("id", url));
-    }
-    return resultMap;
-  }
-
-  public static void main(String[] args) throws IOException {
-//    Netease netease = new Netease();
-//    mapper.writeValue(System.out, netease.search("/search?source=netease&keywords=love%20you&curpage=1"));
-//    mapper.writeValue(System.out, netease.get_playlists("/show_playlist?source=netease&curpage=1"));
-//    mapper.writeValue(System.out, netease.get_playlist("/playlist?list_id=neartist_2004146953"));
-//    mapper.writeValue(System.out, netease.artist("/playlist?artist_id=album_10296"));
-//    Track t= netease.artist("/playlist?artist_id=album_10296").tracks.get(0);
-//    Sound s = new Sound();
-//    netease.bootstrap_track(t,s);
-  }
-
 }
 
 
