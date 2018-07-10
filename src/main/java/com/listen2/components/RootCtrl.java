@@ -10,31 +10,31 @@ public class RootCtrl {
   private VBox rootNode;
   private FormTitleBarCtrl FormTitleBarCtrl;
   private HomeTabPaneCtrl homeTabPaneCtrl;
-  private PlayerCtrl PlayerCtrl;
-  private PlayListTabCtrl PlayListTabCtrl;
-  private SearchTabCtrl SearchTabCtrl;
-  private MyListTabCtrl MyListTabCtrl;
-  private AbouTabCtrl AbouTabCtrl;
+  private PlayerCtrl playerCtrl;
+  private PlayListTabCtrl playListTabCtrl;
+  private SearchTabCtrl searchTabCtrl;
+  private MyListTabCtrl myListTabCtrl;
+  private AbouTabCtrl abouTabCtrl;
 
   public RootCtrl() {
     rootNode = new VBox();
     FormTitleBarCtrl = new FormTitleBarCtrl();
     homeTabPaneCtrl = new HomeTabPaneCtrl();
-    PlayerCtrl = new PlayerCtrl(homeTabPaneCtrl);
-    PlayListTabCtrl = new PlayListTabCtrl(PlayerCtrl,homeTabPaneCtrl);
-    SearchTabCtrl = new SearchTabCtrl(PlayerCtrl,homeTabPaneCtrl);
-    MyListTabCtrl = new MyListTabCtrl();
-    AbouTabCtrl = new AbouTabCtrl();
-    homeTabPaneCtrl.setPlayListTabCtrl(PlayListTabCtrl);
-    homeTabPaneCtrl.setSearchTabCtrl(SearchTabCtrl);
-    homeTabPaneCtrl.setMyListTabCtrl(MyListTabCtrl);
-    homeTabPaneCtrl.setAbouTabCtrl(AbouTabCtrl);
+    playerCtrl = new PlayerCtrl(homeTabPaneCtrl);
+    playListTabCtrl = new PlayListTabCtrl(playerCtrl,homeTabPaneCtrl);
+    searchTabCtrl = new SearchTabCtrl(playerCtrl,homeTabPaneCtrl);
+    myListTabCtrl = new MyListTabCtrl(playerCtrl,homeTabPaneCtrl);
+    abouTabCtrl = new AbouTabCtrl();
+    homeTabPaneCtrl.setPlayListTabCtrl(playListTabCtrl);
+    homeTabPaneCtrl.setSearchTabCtrl(searchTabCtrl);
+    homeTabPaneCtrl.setMyListTabCtrl(myListTabCtrl);
+    homeTabPaneCtrl.setAbouTabCtrl(abouTabCtrl);
 
     init();
   }
   private void init(){
-    homeTabPaneCtrl.getContainerTabPane().setPrefHeight(720- PlayerCtrl.getPlayerBox().getPrefHeight() - FormTitleBarCtrl.getContainerHBox().getPrefHeight());
-    rootNode.getChildren().addAll(FormTitleBarCtrl.getContainerHBox(),homeTabPaneCtrl.getContainerTabPane(),PlayerCtrl.getPlayerBox());
+    homeTabPaneCtrl.getContainerTabPane().setPrefHeight(720- playerCtrl.getPlayerBox().getPrefHeight() - FormTitleBarCtrl.getContainerHBox().getPrefHeight());
+    rootNode.getChildren().addAll(FormTitleBarCtrl.getContainerHBox(),homeTabPaneCtrl.getContainerTabPane(),playerCtrl.getPlayerBox());
   }
 
   public VBox getRootNode() {

@@ -5,10 +5,7 @@ import com.listen2.components.tabs.PlayListDetailTabCtrl;
 import com.listen2.models.LrcRow;
 import com.listen2.models.PlayList;
 import com.listen2.models.Track;
-import com.listen2.providers.IProvider;
-import com.listen2.providers.Netease;
-import com.listen2.providers.QQ;
-import com.listen2.providers.Xiami;
+import com.listen2.providers.*;
 import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -116,6 +113,7 @@ public class PlayerCtrl {
       put("netease",new Netease());
       put("qq",new QQ());
       put("xiami",new Xiami());
+      put("kuwo",new Kuwo());
     }};
 
     Track track = playQueueController.currentTrack();
