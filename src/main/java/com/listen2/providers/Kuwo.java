@@ -86,14 +86,15 @@ public class Kuwo implements  IProvider{
   public SearchResult search(String keyword ,int curpage) {
     // API From https://blog.csdn.net/u011354613/article/details/52756467
     curpage = curpage - 1;
-    String target_url = String.format("http://search.kuwo.cn/r.s?ft=music&itemset=web_2013&client=kt&rformat=json&encoding=utf8&all=%s&pn=%d&rn=20",keyword,curpage );
+    String target_url = String.format("http://search.kuwo.cn/r.s?ft=music&itemset=web_2013&client=kt&rformat=json&encoding=utf8&all=%s&pn=%d&rn=20",keyword,curpage);
     String responseBody = UtilTools.get(target_url).replaceAll("\'","\"");
+
     List<Track> tracks = new ArrayList<>(20);
     try {
       JsonNode dataNode = mapper.readTree(responseBody);
       dataNode.get("abslist").forEach(li -> tracks.add(_convert_song(li,"search")));
 
-      return new SearchResult(tracks, dataNode.get("TOTAL").get("totalnum").asInt());
+      return new SearchResult(tracks, dataNode.get("TOTAL").asInt());
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -177,11 +178,13 @@ public String bootstrap_track(Track track){
    */
     String target_url = String.format("http://www.kuwo.cn/www/categoryNew/getPlayListInfoUnderCategory?type=taglist&digest=10000&id=%d&start=%d&count=30",37,curpage*30);
     String responseBody =UtilTools.get(target_url);
-    String jsonBody = responseBody.substring("MusicJsonCallback(".length(),responseBody.length()-1);
+    System.out.println(responseBody);
+
     List<PlayListMeta> playListMetas = new ArrayList<>(30);
 
     try{
-      JsonNode dataNode = mapper.readTree(jsonBody).get(0);
+
+      JsonNode dataNode = mapper.readTree(responseBody).get("data").get(0);
 
       dataNode.get("data").forEach(li->{
         String id = li.get("id").asText();

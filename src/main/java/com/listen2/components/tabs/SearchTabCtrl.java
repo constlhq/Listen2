@@ -5,10 +5,7 @@ import com.listen2.components.PlayerCtrl;
 import com.listen2.models.PlayList;
 import com.listen2.models.SearchResult;
 import com.listen2.models.Track;
-import com.listen2.providers.IProvider;
-import com.listen2.providers.Netease;
-import com.listen2.providers.QQ;
-import com.listen2.providers.Xiami;
+import com.listen2.providers.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -34,12 +31,16 @@ public class SearchTabCtrl{
     put("netease",new Netease());
     put("xiami",new Xiami());
     put("qq",new QQ());
+    put("kuwo",new Kuwo());
+    put("kugou",new Kugou());
   }};
 
   static Map<String,Integer> providerIndexMap = new HashMap<String,Integer>(){{
     put("netease",0);
     put("xiami",1);
     put("qq",2);
+    put("kuwo",3);
+    put("kugou",4);
   }};
 
 

@@ -5,10 +5,7 @@ import com.listen2.components.HomeTabPaneCtrl;
 import com.listen2.components.PlayerCtrl;
 import com.listen2.models.PlayList;
 import com.listen2.models.Track;
-import com.listen2.providers.IProvider;
-import com.listen2.providers.Netease;
-import com.listen2.providers.QQ;
-import com.listen2.providers.Xiami;
+import com.listen2.providers.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +36,8 @@ public class PlayListTabCtrl{
       put("netease",new Netease());
       put("xiami",new Xiami());
       put("qq",new QQ());
+      put("kuwo",new Kuwo());
+      put("kugou",new Kugou());
     }};
 
   private Tab tab;

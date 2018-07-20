@@ -114,6 +114,8 @@ public class PlayerCtrl {
       put("qq",new QQ());
       put("xiami",new Xiami());
       put("kuwo",new Kuwo());
+      put("kugou",new Kugou());
+
     }};
 
     Track track = playQueueController.currentTrack();
@@ -310,6 +312,9 @@ public class PlayerCtrl {
 
 
   public void playTrack(Track track){
+    if(track.source.equals("kuwo")  && track.img_url.isEmpty()){
+      Kuwo.addSongImg(track);
+    }
     if (track.disabled){
       playTrack(playQueueController.nextTrack());
     }
@@ -331,7 +336,8 @@ public class PlayerCtrl {
           setLyric();
         }
       }else{
-        // 此处当播放列表里的歌都不能播放时，会出现死循环。先这样吧
+        // TODO
+        // 当播放列表里的歌都不能播放时，会出现死循环。
         if (playQueueController.getObservableTrackList().size()>1)
           playTrack(playQueueController.nextTrack());
         else{
@@ -368,9 +374,7 @@ public class PlayerCtrl {
 
 
   private void bindHandlers(){
-
     mediaPlayer.volumeProperty().bindBidirectional(volumeSilder.valueProperty());
-
     mediaPlayer.setOnReady(()->{
       playTimeSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
     });
@@ -472,8 +476,6 @@ public class PlayerCtrl {
         volumeDownRegion.setVisible(false);
       }
     });
-
-
 
     forwordRegion.setOnMouseClicked(e->{
       playTrack(playQueueController.nextTrack());
@@ -605,7 +607,6 @@ public class PlayerCtrl {
     private int currentPlayingIndex;
 
 
-
     public void setSelectedIndex(){
       if(observableTrackList.size()>0){
         queueTableView.getSelectionModel().select(currentPlayingIndex);
@@ -694,11 +695,9 @@ public class PlayerCtrl {
       titleCol.setCellValueFactory(new PropertyValueFactory("titleProperty"));
       titleCol.setPrefWidth(queueTableView.getPrefWidth() *0.5);
 
-
       TableColumn actionCol = new TableColumn();
       actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
       actionCol.setPrefWidth(queueTableView.getPrefWidth() *0.1);
-
       TableColumn<Track, String> singerCol = new TableColumn<>("歌手");
       singerCol.setCellValueFactory(new PropertyValueFactory("artistProperty"));
       singerCol.setPrefWidth(queueTableView.getPrefWidth() *0.3);
@@ -710,7 +709,6 @@ public class PlayerCtrl {
                 @Override
                 public TableCell call(final TableColumn<Track, String> param) {
                   final TableCell<Track, String> cell = new TableCell<Track, String>() {
-
                     @Override
                     public void updateItem(String item, boolean empty) {
                       super.updateItem(item, empty);
