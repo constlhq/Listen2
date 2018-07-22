@@ -35,7 +35,6 @@ public class FormTitleBarCtrl {
     maxSizeICon.setId("window-max-btn");
     maxSizeICon.setFitHeight(16);
     maxSizeICon.setFitWidth(16);
-    maxSizeICon.setCursor(Cursor.HAND);
     maxSizeICon.setDisable(true);
     HBox.setMargin(maxSizeICon,new Insets(2,0,2,5));
 
@@ -45,12 +44,14 @@ public class FormTitleBarCtrl {
     minSizeIcon.setFitWidth(16);
     minSizeIcon.setCursor(Cursor.HAND);
     HBox.setMargin(minSizeIcon,new Insets(2,0,2,5));
-
     containerHBox.getChildren().addAll(closeIcon,maxSizeICon,minSizeIcon);
   }
 
   private void initListeners() {
-    closeIcon.setOnMouseClicked((event -> Platform.exit()));
+    closeIcon.setOnMouseClicked((event ->{
+      Platform.setImplicitExit(false);
+      minSizeIcon.getScene().getWindow().hide();
+    }));
     minSizeIcon.setOnMouseClicked(event -> ((Stage)minSizeIcon.getScene().getWindow()).setIconified(true));
     maxSizeICon.setOnMouseClicked(event -> {
        Stage mainstage =  (Stage)minSizeIcon.getScene().getWindow();
@@ -66,9 +67,7 @@ public class FormTitleBarCtrl {
       primaryStage.setX(event.getScreenX() - xOffset);
       primaryStage.setY(event.getScreenY() - yOffset);
     });
-
   }
-
 
   public FormTitleBarCtrl() {
     containerHBox = new HBox();

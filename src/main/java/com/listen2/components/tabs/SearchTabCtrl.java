@@ -31,16 +31,16 @@ public class SearchTabCtrl{
     put("netease",new Netease());
     put("xiami",new Xiami());
     put("qq",new QQ());
-    put("kuwo",new Kuwo());
     put("kugou",new Kugou());
+    put("kuwo",new Kuwo());
   }};
 
   static Map<String,Integer> providerIndexMap = new HashMap<String,Integer>(){{
     put("netease",0);
     put("xiami",1);
     put("qq",2);
-    put("kuwo",3);
-    put("kugou",4);
+    put("kugou",3);
+    put("kuwo",4);
   }};
 
 
@@ -84,8 +84,8 @@ public class SearchTabCtrl{
     neRadio = new RadioButton("网易");
     xmRadio = new RadioButton("虾米");
     qqRadio = new RadioButton("QQ");
-    kwRadio = new RadioButton("酷我");
     kgRadio = new RadioButton("酷狗");
+    kwRadio = new RadioButton("酷我");
 
     init();
   }
@@ -126,7 +126,7 @@ public class SearchTabCtrl{
     currentProvider = providerMap.get("netease");
     currentProviderIndex =0;
 
-    searchSourceHBox.getChildren().addAll(neRadio,xmRadio,qqRadio,kwRadio,kgRadio);
+    searchSourceHBox.getChildren().addAll(neRadio,xmRadio,qqRadio,kgRadio,kwRadio);
     searchInputPane.getChildren().addAll(searchInput,clearBtn);
     VBox.setMargin(resultTrackTable,new Insets(-15 ,10, 0, 10));
     containerVBox.getChildren().addAll(searchInputPane,searchSourceHBox,resultTrackTable,paginHBox);
@@ -137,12 +137,12 @@ public class SearchTabCtrl{
     resultTrackTable.setItems(trackObservableList);
   }
 
-
   private void doSearch(){
     String keyword = searchInput.getText();
     int curpage = currentPageBook[currentProviderIndex];
     System.out.println(curpage+"CUYRPAGE");
     if(!keyword.isEmpty()){
+
       SearchResult searchResult = currentProvider.search(keyword,curpage);
       trackObservableList.clear();
       trackObservableList.addAll(searchResult.tracks);
@@ -162,7 +162,6 @@ public class SearchTabCtrl{
         nextPageBtn.setDisable(false);
       }
     }
-
   }
 
   private void addListeners(){

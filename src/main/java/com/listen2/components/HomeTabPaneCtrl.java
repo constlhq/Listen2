@@ -8,15 +8,16 @@ import com.listen2.components.tabs.PlayListTabCtrl;
 import com.listen2.components.tabs.SearchTabCtrl;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 
 public  class HomeTabPaneCtrl {
 
   private TabPane tabPane;
 
-  private PlayListTabCtrl PlayListTabCtrl;
-  private MyListTabCtrl MyListTabCtrl;
-  private SearchTabCtrl SearchTabCtrl;
-  private AbouTabCtrl AbouTabCtrl;
+  private PlayListTabCtrl playListTabCtrl;
+  private MyListTabCtrl myListTabCtrl;
+  private SearchTabCtrl searchTabCtrl;
+  private AbouTabCtrl abouTabCtrl;
 
   private void init(){
     tabPane.setId("main-tab-pane");
@@ -35,30 +36,32 @@ public  class HomeTabPaneCtrl {
   }
 
   public void setPlayListTabCtrl(PlayListTabCtrl PlayListTabCtrl) {
-    this.PlayListTabCtrl = PlayListTabCtrl;
+    this.playListTabCtrl = PlayListTabCtrl;
     tabPane.getTabs().add(PlayListTabCtrl.getTab());
   }
   public void setSearchTabCtrl(SearchTabCtrl SearchTabCtrl) {
-    this.SearchTabCtrl = SearchTabCtrl;
+    this.searchTabCtrl = SearchTabCtrl;
     tabPane.getTabs().add(SearchTabCtrl.getTab());
   }
 
   public void setMyListTabCtrl(MyListTabCtrl MyListTabCtrl) {
-    this.MyListTabCtrl = MyListTabCtrl;
+    this.myListTabCtrl = MyListTabCtrl;
     tabPane.getTabs().add(MyListTabCtrl.getTab());
   }
 
   public void setAbouTabCtrl(AbouTabCtrl AbouTabCtrl) {
-    this.AbouTabCtrl = AbouTabCtrl;
+    this.abouTabCtrl = AbouTabCtrl;
     tabPane.getTabs().add(AbouTabCtrl.getTab());
   }
 
   public TabPane getContainerTabPane() {
     return tabPane;
   }
-
   public void addTab(Tab newTab){
     tabPane.getTabs().add(newTab);
-    System.out.println(tabPane.getTabs().size());
   }
+
+
+
+
 }

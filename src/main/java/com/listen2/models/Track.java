@@ -1,9 +1,12 @@
 package com.listen2.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Track {
+  public Track() {}
+
   public String id;
   public String title;
   public String artist;
@@ -19,6 +22,20 @@ public class Track {
   public StringProperty titleProperty;
   public StringProperty artistProperty;
   public StringProperty albumProperty;
+
+
+  @JsonProperty
+  public void setTitleProperty(String titleProperty) {
+    this.titleProperty =new SimpleStringProperty(titleProperty);
+  }
+  @JsonProperty
+  public void setArtistProperty(String artistProperty) {
+    this.artistProperty =new SimpleStringProperty(artistProperty);
+  }
+  @JsonProperty
+  public void setAlbumProperty(String albumProperty) {
+    this.albumProperty =new SimpleStringProperty(albumProperty);
+  }
 
   public Track(TrackBuilder trackBuilder ) {
     this.id = trackBuilder.id;
@@ -135,10 +152,6 @@ public class Track {
     return artistProperty;
   }
 
-  public void setAlbumProperty(String albumProperty) {
-    this.albumProperty.set(albumProperty);
-  }
-
   public String getAlbumProperty() {
     return albumProperty.get();
   }
@@ -147,20 +160,20 @@ public class Track {
     return albumProperty;
   }
 
-  @Override
-  public String toString() {
-    return "{" +
-            "id:" + id +
-            ", title:" + title +
-            ", artist:" + artist +
-            ", artist_id:" + artist_id +
-            ", album:" + album +
-            ", album_id:" + album_id +
-            ", source:" + source +
-            ", source_url:" + source_url +
-            ", img_url:" + img_url +
-            ", url:" + url +
-            ", lyric_url:" + lyric_url +
-            ", disabled:" + disabled + "}";
-  }
+//  @Override
+//  public String toString() {
+//    return "{" +
+//            "id:" + id +
+//            ", title:" + title +
+//            ", artist:" + artist +
+//            ", artist_id:" + artist_id +
+//            ", album:" + album +
+//            ", album_id:" + album_id +
+//            ", source:" + source +
+//            ", source_url:" + source_url +
+//            ", img_url:" + img_url +
+//            ", url:" + url +
+//            ", lyric_url:" + lyric_url +
+//            ", disabled:" + disabled + "}";
+//  }
 }

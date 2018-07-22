@@ -10,10 +10,10 @@ public class RootCtrl {
   private VBox rootNode;
   private FormTitleBarCtrl FormTitleBarCtrl;
   private HomeTabPaneCtrl homeTabPaneCtrl;
-  private PlayerCtrl playerCtrl;
-  private PlayListTabCtrl playListTabCtrl;
+  public PlayerCtrl playerCtrl;
+  public PlayListTabCtrl playListTabCtrl;
   private SearchTabCtrl searchTabCtrl;
-  private MyListTabCtrl myListTabCtrl;
+  public MyListTabCtrl myListTabCtrl;
   private AbouTabCtrl abouTabCtrl;
 
   public RootCtrl() {

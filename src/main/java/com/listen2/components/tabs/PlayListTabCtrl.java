@@ -1,19 +1,13 @@
 package com.listen2.components.tabs;
 
-
 import com.listen2.components.HomeTabPaneCtrl;
 import com.listen2.components.PlayerCtrl;
 import com.listen2.models.PlayList;
-import com.listen2.models.Track;
 import com.listen2.providers.*;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,12 +16,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
-
-
-
-import java.net.URL;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class PlayListTabCtrl{
@@ -36,13 +26,12 @@ public class PlayListTabCtrl{
       put("netease",new Netease());
       put("xiami",new Xiami());
       put("qq",new QQ());
-      put("kuwo",new Kuwo());
       put("kugou",new Kugou());
-    }};
+      put("kuwo",new Kuwo());
+  }};
 
   private Tab tab;
   private TabPane playListSourceTabPane;
-  private List<PlayListItem> playListItemList;
   private VBox playListTabVBox;
   private HBox playListSourceHBox;
   private ScrollPane scrollPane;
@@ -55,25 +44,21 @@ public class PlayListTabCtrl{
   private HomeTabPaneCtrl homeTabPaneCtrl;
 
 
-
-
   public PlayListTabCtrl(PlayerCtrl playerCtrl, HomeTabPaneCtrl parentTabPaneCtrl) {
     this.playerCtrl = playerCtrl;
     homeTabPaneCtrl = parentTabPaneCtrl;
     tab = new Tab("精选歌单");
-    playListItemList = new ArrayList<>(50);
     flowPane = new FlowPane();
     scrollPane = new ScrollPane();
     playListTabVBox = new VBox();
-//    vBoxList = FXCollections.observableArrayList();
 
     playListSourceHBox = new HBox(10);
     sourceToggleGroup = new ToggleGroup();
     neRadio = new RadioButton("网易");
     xmRadio = new RadioButton("虾米");
     qqRadio = new RadioButton("QQ");
-    kwRadio = new RadioButton("酷我");
     kgRadio = new RadioButton("酷狗");
+    kwRadio = new RadioButton("酷我");
 
     init();
     addListeners();
@@ -85,23 +70,23 @@ public class PlayListTabCtrl{
     neRadio.setUserData("netease");
     xmRadio.setUserData("xiami");
     qqRadio.setUserData("qq");
-    kwRadio.setUserData("kuwo");
     kgRadio.setUserData("kugou");
+    kwRadio.setUserData("kuwo");
 
     neRadio.setToggleGroup(sourceToggleGroup);
     xmRadio.setToggleGroup(sourceToggleGroup);
     qqRadio.setToggleGroup(sourceToggleGroup);
-    kwRadio.setToggleGroup(sourceToggleGroup);
     kgRadio.setToggleGroup(sourceToggleGroup);
+    kwRadio.setToggleGroup(sourceToggleGroup);
 
-    playListSourceHBox.getChildren().addAll(neRadio,xmRadio,qqRadio,kwRadio,kgRadio);
+    playListSourceHBox.getChildren().addAll(neRadio,xmRadio,qqRadio,kgRadio,kwRadio);
     playListSourceHBox.setAlignment(Pos.CENTER);
 
     sourceToggleGroup.selectToggle(neRadio);
     currentProvider = providerMap.get("netease");
-    loadPlaylists(getPlaylists(currentProvider,0),true);
 
-    scrollPane.getStyleClass().add("scroll-pane-dark");
+
+    scrollPane.getStyleClass().add("pane-dark");
     scrollPane.setFitToWidth(true);
     scrollPane.setContent(flowPane);
     playListTabVBox.getChildren().addAll(playListSourceHBox,scrollPane);
@@ -109,19 +94,31 @@ public class PlayListTabCtrl{
     flowPane.setHgap(20);
     flowPane.setAlignment(Pos.TOP_LEFT);
     tab.setContent(playListTabVBox);
-  }
-  private void loadPlaylists(List<VBox> playListItems,boolean clear){
-    if (clear){
-      flowPane.getChildren().clear();
-    }
-    flowPane.getChildren().addAll(playListItems);
+    loadPlaylists(currentProvider,0,true);
   }
 
-  private  List<VBox> getPlaylists(IProvider provider,int curpage){
-   return  provider.get_playlists(curpage)
-            .stream().parallel().map(playListMeta ->{
-              return new PlayListItem(playListMeta.title,playListMeta.cover_img_url,playListMeta.id).getPlayListItemVBox();
-            }).collect(Collectors.toList());
+  private void loadPlaylists(IProvider provider, int cpage, boolean clear) {
+    ExecutorService es = Executors.newCachedThreadPool();
+    Task task = new Task() {
+      @Override
+      protected Object call() throws Exception {
+        System.out.println("taks");
+        List<VBox> items = provider.get_playlists(cpage)
+                .parallelStream().map(playListMeta ->
+                        new PlayListItem(playListMeta.title, playListMeta.cover_img_url, playListMeta.id).getPlayListItemVBox()
+                ).collect(Collectors.toList());
+
+        Platform.runLater(() -> {
+          if (clear) {
+            flowPane.getChildren().clear();
+          }
+          if (items != null)
+            flowPane.getChildren().addAll(items);
+        });
+        return null;
+      }
+    };
+    Future future = es.submit(task);
   }
 
   public void addListeners(){
@@ -130,26 +127,21 @@ public class PlayListTabCtrl{
             (obs,lv,nv) -> {
               if (nv.doubleValue()==1){
                 //load more
-                loadPlaylists(getPlaylists(currentProvider,++curpage),false);
+                loadPlaylists(currentProvider,++curpage, false);
               }
             });
-
-
 
     sourceToggleGroup.selectedToggleProperty().addListener((obv,ov,nv)->{
       curpage = 0;
       String providerCode = nv.getUserData().toString();
       currentProvider = providerMap.get(providerCode);
-        flowPane.getChildren().clear();
-        flowPane.getChildren().addAll(getPlaylists(currentProvider,curpage));
+      loadPlaylists(currentProvider,curpage,true);
     });
   }
 
   public Tab getTab() {
     return tab;
   }
-
-
 
   public class PlayListItem {
     private StackPane playListItemStackPane;
@@ -161,10 +153,10 @@ public class PlayListTabCtrl{
     private String playlistID;
 
 
-
     public PlayListItem(String playListName, String imgurl, String id) {
       ImageView playIcon = new ImageView(new Image(PlayListItem.class.getResource("/assets/play.png").toString(),16,16,false,true));
       playListItemVBox = new VBox(5);
+      playListItemVBox.setAlignment(Pos.CENTER);
       playListNameLabel = new Label(playListName);
       playListItemStackPane = new StackPane();
       playListItemImage = new Image(imgurl,140,140,false,true,true);
@@ -177,15 +169,12 @@ public class PlayListTabCtrl{
     private void init(){
       playListItemStackPane.setPrefSize(140,140);
       playListItemPlayButton.setPrefSize(16,16);
-
       playListNameLabel.getStyleClass().add("playlist-label");
       playListItemPlayButton.getStyleClass().add("icon-btn");
       playListItemStackPane.setAlignment(Pos.BOTTOM_RIGHT);
       playListItemStackPane.getChildren().addAll(playListItemImageView,playListItemPlayButton);
       playListItemVBox.getChildren().addAll(playListItemStackPane,playListNameLabel);
-
       addListeners();
-
     }
 
     private void addListeners(){
@@ -207,23 +196,6 @@ public class PlayListTabCtrl{
         playerCtrl.playPlayList(playList);
       });
     }
-
-    public StackPane getPlayListItemContaioner() {
-      return playListItemStackPane;
-    }
-
-    public ImageView getPlayListItemImageView() {
-      return playListItemImageView;
-    }
-
-    public Image getPlayListItemImage() {
-      return playListItemImage;
-    }
-
-    public Button getPlayListItemPlayButton() {
-      return playListItemPlayButton;
-    }
-
     public VBox getPlayListItemVBox() {
       return playListItemVBox;
     }

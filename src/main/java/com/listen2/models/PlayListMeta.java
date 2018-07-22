@@ -8,6 +8,17 @@ public class PlayListMeta {
   public  String source_url ;
   public  String id ;
 
+  public PlayListMeta(String title, String cover_img_url, String source_url, String id) {
+    this.title = title;
+    this.cover_img_url = cover_img_url;
+    this.source_url = source_url;
+    this.id = id;
+  }
+
+  public PlayListMeta() {
+    
+  }
+
   PlayListMeta(PlayListMeta.PlayListMetaBuilder PlayListMetaBuilder){
     this.title = PlayListMetaBuilder.title;
     this.cover_img_url = PlayListMetaBuilder.cover_img_url;

@@ -1,6 +1,7 @@
 package com.listen2.components;
 
 import com.listen2.components.tabs.LrcTabCtrl;
+import com.listen2.components.tabs.MyListTabCtrl;
 import com.listen2.components.tabs.PlayListDetailTabCtrl;
 import com.listen2.models.LrcRow;
 import com.listen2.models.PlayList;
@@ -64,16 +65,16 @@ public class PlayerCtrl {
   private ImageView imageCover;
   private Slider playTimeSlider;
   private Slider volumeSilder;
-  private Region backwordRegion,playRegion,pauseRegion,forwordRegion,originalLinkRegion,add2QueueRegion,add2PlaylistRegion,queueRegion,repeatAllRegion,repeatOneRegion,randomRegion,volumeUpRegion,volumeDownRegion,volumeOffRegion;
+  private Region backwordRegion,playRegion,pauseRegion,forwordRegion,originalLinkRegion,add2QueueRegion,add2MyListRegion,queueRegion,repeatAllRegion,repeatOneRegion,randomRegion,volumeUpRegion,volumeDownRegion,volumeOffRegion;
   private StackPane volumeIndicator,playStateIndicator,repeatModeIndicator;
   private Label songName,singerName,trackTime,curTime;
   private MediaView mediaView;
   private MediaPlayer mediaPlayer;
-  private Popup queuePopup;
+  private Popup queuePopup, add2MyListPopup;
   private Map<String,IProvider> providerMap;
   private Timer timer;
   private RepeatMode repeatMode;
-  private PlayQueueController playQueueController;
+  public PlayQueueController playQueueController;
   private HomeTabPaneCtrl homeTabPaneCtrl;
   private LrcTabCtrl lrcTabCtrl;
 
@@ -89,7 +90,7 @@ public class PlayerCtrl {
     pauseRegion = new Region();
     forwordRegion = new Region();
     add2QueueRegion = new Region();
-    add2PlaylistRegion = new Region();
+    add2MyListRegion = new Region();
     queueRegion = new Region();
     repeatAllRegion = new Region();
     repeatOneRegion = new Region();
@@ -101,6 +102,7 @@ public class PlayerCtrl {
     playTimeSlider = new Slider();
     volumeSilder = new Slider();
     queuePopup = new Popup();
+    add2MyListPopup = new Popup();
     songName  =  new Label("");
     singerName = new Label("");
     trackTime = new Label("/00:00");
@@ -132,7 +134,7 @@ public class PlayerCtrl {
         bindHandlers();
       }
     }
-    mediaPlayer = new MediaPlayer(new Media(PlayerCtrl.class.getResource("/assets/test.mp3").toString()));
+    mediaPlayer = new MediaPlayer(new Media(PlayerCtrl.class.getResource("/assets/test.aac").toString()));
     init();
   }
 
@@ -183,7 +185,7 @@ public class PlayerCtrl {
     forwordRegion.setShape(forword);
     originalLinkRegion.setShape(originalLink);
     add2QueueRegion.setShape(add2Queue);
-    add2PlaylistRegion.setShape(add2Playlist);
+    add2MyListRegion.setShape(add2Playlist);
     queueRegion.setShape(queue);
     repeatAllRegion.setShape(repeatAll);
     repeatOneRegion.setShape(repeatOne);
@@ -197,7 +199,7 @@ public class PlayerCtrl {
     pauseRegion.getStyleClass().add("svg-btn");
     forwordRegion.getStyleClass().add("svg-btn");
     add2QueueRegion.getStyleClass().add("svg-btn");
-    add2PlaylistRegion.getStyleClass().add("svg-btn");
+    add2MyListRegion.getStyleClass().add("svg-btn");
     queueRegion.getStyleClass().add("svg-btn");
     repeatAllRegion.getStyleClass().add("svg-btn");
     repeatOneRegion.getStyleClass().add("svg-btn");
@@ -214,7 +216,7 @@ public class PlayerCtrl {
     forwordRegion.setPrefSize(BTN_MD_SIZE,BTN_MD_SIZE);
     originalLinkRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
     add2QueueRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
-    add2PlaylistRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
+    add2MyListRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
     queueRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
     repeatAllRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
     repeatOneRegion.setPrefSize(BTN_SM_SIZE,BTN_SM_SIZE);
@@ -258,7 +260,7 @@ public class PlayerCtrl {
             imageCover,
             playTimeSlider,curTime,trackTime,
             songName,singerName,originalLinkRegion,
-            add2PlaylistRegion,repeatModeIndicator,queueRegion,volumeIndicator,volumeSilder);
+            add2MyListRegion,repeatModeIndicator,queueRegion,volumeIndicator,volumeSilder);
     anchorPane.setId("player-pane");
     setAnchor();
     addListeners();
@@ -266,7 +268,7 @@ public class PlayerCtrl {
     queuePopup.setAutoHide(true);
 
     queuePopup.getContent().add(playQueueController.getQueuePane());
-
+    
   }
 
   private void setAnchor(){
@@ -284,7 +286,7 @@ public class PlayerCtrl {
 
     AnchorPane.setRightAnchor(singerName,260.0);
     AnchorPane.setRightAnchor(originalLinkRegion,122.0);
-    AnchorPane.setRightAnchor(add2PlaylistRegion,88.0);
+    AnchorPane.setRightAnchor(add2MyListRegion,88.0);
     AnchorPane.setRightAnchor(repeatModeIndicator,54.0);
     AnchorPane.setRightAnchor(queueRegion,20.0);
     AnchorPane.setRightAnchor(volumeIndicator,120.0);
@@ -298,7 +300,7 @@ public class PlayerCtrl {
     AnchorPane.setTopAnchor(songName,12.0);
     AnchorPane.setTopAnchor(singerName,12.0);
     AnchorPane.setTopAnchor(originalLinkRegion,8.0);
-    AnchorPane.setTopAnchor(add2PlaylistRegion,8.0);
+    AnchorPane.setTopAnchor(add2MyListRegion,8.0);
     AnchorPane.setTopAnchor(repeatModeIndicator,8.0);
     AnchorPane.setTopAnchor(queueRegion,8.0);
 
@@ -310,6 +312,13 @@ public class PlayerCtrl {
 
   }
 
+  public Region getAdd2MyListRegion() {
+    return add2MyListRegion;
+  }
+
+  public Popup getAdd2MyListPopup() {
+    return add2MyListPopup;
+  }
 
   public void playTrack(Track track){
     if(track.source.equals("kuwo")  && track.img_url.isEmpty()){
@@ -494,6 +503,8 @@ public class PlayerCtrl {
       }
     });
 
+
+
     repeatAllRegion.setOnMouseClicked(e->{
       repeatOneRegion.setVisible(true);
       repeatAllRegion.setVisible(false);
@@ -596,7 +607,10 @@ public class PlayerCtrl {
     REPEAT_ALL,REPEAT_ONE,RANDOM
   }
 
-  private  class PlayQueueController{
+
+
+
+  public  class PlayQueueController{
 
     private VBox playQueueContainer;
     private TableView<Track> queueTableView;
