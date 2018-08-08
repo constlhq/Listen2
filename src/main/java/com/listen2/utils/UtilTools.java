@@ -59,6 +59,7 @@ public interface UtilTools {
     Request request = new Request.Builder()
             .url(url)
             .header("Content-Type","application/x-www-form-urlencoded")
+            .header("Cookie","_iuqxldmzr_=a; _ntes_nnid=a; _ntes_nuid=a; usertrack=a; _ga=a; mail_psc_fingerprint=a;")
             .post(formBody)
             .build();
     try (Response response = client.newCall(request).execute()) {

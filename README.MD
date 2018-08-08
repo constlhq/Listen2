@@ -1,6 +1,8 @@
 ![](./src/main/resources/assets/logo.png) 
 ## Listen2
 [Listen2](https://github.com/constlhq/Listen2) 源于[Listen1](https://github.com/listen1/listen1_chrome_extension),是基于JavaFx框架开发的听歌桌面程序,基于java可跨平台运行,整合了网易云音乐,虾米音乐,QQ音乐,酷狗音乐,酷我音乐平台资源.献给爱听音乐的你.(项目主页:[https://github.com/constlhq/Listen2])
+![](./Screenshot0.png) 
+
 ## 环境说明
 Listen2 基于Java8开发,需保证电脑安装了jre1.8 及以上环境.
 
