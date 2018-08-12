@@ -86,7 +86,6 @@ public class SearchTabCtrl{
     qqRadio = new RadioButton("QQ");
     kgRadio = new RadioButton("酷狗");
     kwRadio = new RadioButton("酷我");
-
     init();
   }
 
@@ -136,6 +135,7 @@ public class SearchTabCtrl{
     buildTable();
     resultTrackTable.setItems(trackObservableList);
   }
+
 
   private void doSearch(){
     String keyword = searchInput.getText();
@@ -389,5 +389,9 @@ public class SearchTabCtrl{
 
   public Tab getTab() {
     return tab;
+  }
+
+  public TextField getSearchInput() {
+    return searchInput;
   }
 }

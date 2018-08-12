@@ -105,7 +105,18 @@ public class MyListTabCtrl{
                 add2MyListPopup.show(playerCtrl.getAdd2MyListRegion(),window.getX()+window.getWidth()/2 - 160,window.getY()+window.getHeight()/2 - 145);
               }
             });
+    playerCtrl.playQueueController.getSaveAll().setOnMouseClicked(e->{
+      List<Track> tracks = playerCtrl.playQueueController.getObservableTrackList();
+      Popup add2MyListPopup = playerCtrl.getAdd2MyListPopup();
+      if(!add2MyListPopup.isShowing()){
+        Window window = this.getTab().getTabPane().getScene().getWindow();
+        add2MyListPopup.getContent().add(buildAdd2MyListContentPane(tracks));
+        add2MyListPopup.show(playerCtrl.getAdd2MyListRegion(),window.getX()+window.getWidth()/2 - 160,window.getY()+window.getHeight()/2 - 145);
+      }
+    });
   }
+
+
 
   public StackPane buildAdd2MyListContentPane(List<Track> tracks){
     StackPane add2MyListStackPane = new StackPane();
@@ -293,7 +304,7 @@ public class MyListTabCtrl{
       EventHandler<MouseEvent> showPlaylistDetailHandler  = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
-          PlayListDetailTabCtrl mylistDetailTabCtrl = new PlayListDetailTabCtrl("歌单详情",myPlayList,playerCtrl,currentProvider,homeTabPaneCtrl);
+          MyListDetailTabCtrl mylistDetailTabCtrl = new MyListDetailTabCtrl("歌单详情",myPlayList,playerCtrl,currentProvider,homeTabPaneCtrl);
           Tab mylistDetailTab = mylistDetailTabCtrl.getTab();
           homeTabPaneCtrl.addTab(mylistDetailTab);
           homeTabPaneCtrl.getContainerTabPane().getSelectionModel().select(mylistDetailTabCtrl.getTab());

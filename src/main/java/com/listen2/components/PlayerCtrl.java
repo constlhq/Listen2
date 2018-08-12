@@ -417,9 +417,6 @@ public class PlayerCtrl {
 
     mediaPlayer.statusProperty().addListener((obvs,ov,nv)->{
 
-      System.out.println("ov+++++"+ov);
-      System.out.println("nv+++++"+nv);
-
       if(nv ==MediaPlayer.Status.STALLED){
         mediaPlayer.seek(Duration.ZERO);
       }
@@ -557,6 +554,10 @@ public class PlayerCtrl {
     songName.setOnMouseClicked(e->{
       showTrackDetail();
     });
+    singerName.setOnMouseClicked(e->{
+      homeTabPaneCtrl.getContainerTabPane().getSelectionModel().select(1);
+      homeTabPaneCtrl.getSearchTabCtrl().getSearchInput().setText(singerName.getText());
+    });
 
   }
 
@@ -606,8 +607,6 @@ public class PlayerCtrl {
   private enum RepeatMode {
     REPEAT_ALL,REPEAT_ONE,RANDOM
   }
-
-
 
 
   public  class PlayQueueController{
@@ -850,8 +849,11 @@ public class PlayerCtrl {
       removeAll.setOnMouseClicked(e->{
         observableTrackList.clear();
       });
-    }
 
+      saveAll.setOnMouseClicked(e->{
+
+      });
+    }
 
 
     public PlayQueueController() {
@@ -878,25 +880,12 @@ public class PlayerCtrl {
       init(observableTrackList);
     }
 
-//    public PlayQueueController(ObservableList<Track> observableTrackList) {
-//      playQueueContainer = new VBox();
-//      queueTableView = new TableView<>();
-//      popUpHeaderContainer = new HBox();
-//      this.observableTrackList = observableTrackList;
-//    }
-
     public ObservableList<Track> getObservableTrackList() {
       return observableTrackList;
     }
 
-//    private ObservableList<Track> getTracks() {
-//      QQ qq = new QQ();
-//      ObservableList<Track> people = FXCollections.observableArrayList();
-//      List<Track> ts= qq.artist("/playlist?artist_id=qqartist_001MXQUi1tlLon").tracks;
-//
-//      System.out.println(ts.get(2).toString());
-//      people.addAll(ts);
-//      return people;
-//    }
+    public Button getSaveAll() {
+      return saveAll;
+    }
   }
 }

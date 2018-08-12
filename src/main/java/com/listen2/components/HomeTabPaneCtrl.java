@@ -19,6 +19,26 @@ public  class HomeTabPaneCtrl {
   private SearchTabCtrl searchTabCtrl;
   private AbouTabCtrl abouTabCtrl;
 
+  public TabPane getTabPane() {
+    return tabPane;
+  }
+
+  public PlayListTabCtrl getPlayListTabCtrl() {
+    return playListTabCtrl;
+  }
+
+  public MyListTabCtrl getMyListTabCtrl() {
+    return myListTabCtrl;
+  }
+
+  public SearchTabCtrl getSearchTabCtrl() {
+    return searchTabCtrl;
+  }
+
+  public AbouTabCtrl getAbouTabCtrl() {
+    return abouTabCtrl;
+  }
+
   private void init(){
     tabPane.setId("main-tab-pane");
     setTebHeight(540 );
