@@ -182,7 +182,7 @@ public class PlayListTabCtrl{
         @Override
         public void handle(MouseEvent event) {
           PlayList playList =  currentProvider.get_playlist(playlistID);
-          PlayListDetailTabCtrl playListDetailTabCtrl = new PlayListDetailTabCtrl("歌单详情",playList,playerCtrl,currentProvider,homeTabPaneCtrl);
+          PlayListDetailTabCtrl playListDetailTabCtrl = new RecommendedPlayListDetailTabCtrl("歌单详情",playList,playerCtrl,currentProvider,homeTabPaneCtrl);
           Tab playListDetailTab = playListDetailTabCtrl.getTab();
           homeTabPaneCtrl.addTab(playListDetailTab);
           homeTabPaneCtrl.getContainerTabPane().getSelectionModel().select(playListDetailTabCtrl.getTab());

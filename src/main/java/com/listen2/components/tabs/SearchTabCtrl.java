@@ -295,7 +295,7 @@ public class SearchTabCtrl{
                   if (event.getEventType() ==MouseEvent.MOUSE_CLICKED) {
                     Track choosenTrack = trackObservableList.get(resultTrackTable.getSelectionModel().getSelectedIndex());
                     PlayList playList = currentProvider.album(choosenTrack.album_id);
-                    PlayListDetailTabCtrl playListDetailTabCtrl = new PlayListDetailTabCtrl("专辑详情",playList,playerCtrl,currentProvider,homeTabPaneCtrl);
+                    PlayListDetailTabCtrl playListDetailTabCtrl = new MyListDetailTabCtrl("专辑详情",playList,playerCtrl,currentProvider,homeTabPaneCtrl);
                     Tab playListDetailTab = playListDetailTabCtrl.getTab();
                     homeTabPaneCtrl.addTab(playListDetailTab);
                     homeTabPaneCtrl.getContainerTabPane().getSelectionModel().select(playListDetailTabCtrl.getTab());
@@ -349,7 +349,7 @@ public class SearchTabCtrl{
 
                       addBtn.setOnMouseClicked(event -> {
                         int index = getIndex();
-                        playerCtrl.addTrackThenPlay(trackObservableList.get(index));
+                        playerCtrl.addTrack(trackObservableList.get(index));
 
                       });
 

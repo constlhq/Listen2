@@ -122,7 +122,7 @@ public class LrcTabCtrl {
 
     albumNameLable.setOnMouseClicked(e->{
       PlayList playList = provider.album(track.album_id);
-      PlayListDetailTabCtrl playListDetailTabCtrl = new PlayListDetailTabCtrl("专辑详情",playList,playerCtrl,provider,homeTabPaneCtrl);
+      PlayListDetailTabCtrl playListDetailTabCtrl = new MyListDetailTabCtrl("专辑详情",playList,playerCtrl,provider,homeTabPaneCtrl);
       Tab playListDetailTab = playListDetailTabCtrl.getTab();
       homeTabPaneCtrl.addTab(playListDetailTab);
       homeTabPaneCtrl.getContainerTabPane().getSelectionModel().select(playListDetailTabCtrl.getTab());
