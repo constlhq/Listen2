@@ -23,7 +23,7 @@ public class HeaderInterceptor implements Interceptor {
       referer_value = "http://music.163.com/";
     }
     else if (originalUrl.contains("xiami.com/")) {
-      referer_value = "http://m.xiami.com/";
+      referer_value = "http://www.xiami.com/";
     }
 
     else if(( originalUrl.contains("y.qq.com/")) ||
